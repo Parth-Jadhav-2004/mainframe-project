@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COBOL to Pseudocode Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>COBOL to Pseudocode Converter</h1>
+            <p class="subtitle">Upload your COBOL file to get started</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-box" id="dropZone">
+                    <input type="file" id="fileInput" accept=".cob,.txt" hidden>
+                    <div class="upload-content">
+                        <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+                        <p>Drag and drop your COBOL file here or</p>
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                    </div>
+                </div>
+                <p class="file-info" id="fileInfo">Supported formats: .cob, .txt</p>
+            </div>
+
+            <div class="progress-bar-container" id="uploadProgressBarContainer" style="display: none;">
+                <div class="progress-bar" id="uploadProgressBar"></div>
+            </div>
+            
+            <div class="loading" id="loadingMessage" style="display: none;">
+                <p>Processing your file, please wait...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

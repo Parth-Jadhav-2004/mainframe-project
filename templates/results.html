@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Add specific styles for results.html if needed, or keep them in style.css */
+        body {
+            background-color: #f0f2f5; /* A slightly different background for the results page */
+        }
+        .container {
+            max-width: 1000px;
+            margin-top: 2rem;
+        }
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .results-header h1 {
+            color: #333;
+            font-size: 2rem;
+        }
+        .loading-results {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #555;
+        }
+        .progress-bar-container-results {
+            width: 80%;
+            max-width: 600px;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 1rem auto 2rem auto;
+            overflow: hidden;
+        }
+        .progress-bar-results {
+            width: 0%;
+            height: 100%;
+            background-color: #76c7c0; /* New color: Teal */
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+        .flowchart-scroll-container {
+            max-height: 500px;
+            overflow: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        .flowchart-svg-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="results-header">
+            <h1>Conversion Results</h1>
+        </div>
+
+        <div id="loadingResults" class="loading-results">
+            <p>Loading results...</p>
+            <div class="progress-bar-container-results">
+                <div class="progress-bar-results" id="resultsProgressBar"></div>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsDisplaySection" style="display: none;">
+            <div class="result-tabs">
+                <button class="tab-btn active" data-tab="pseudocode">Pseudocode</button>
+                <button class="tab-btn" data-tab="explanation">Explanation</button>
+                <button class="tab-btn" data-tab="flowchart">Flowchart</button>
+            </div>
+
+            <div class="result-content">
+                <div class="tab-content active" id="pseudocode">
+                    <pre id="pseudocodeContent"></pre>
+                </div>
+                <div class="tab-content" id="explanation">
+                    <div id="explanationContent"></div>
+                </div>
+                <div class="tab-content" id="flowchart">
+                    <div id="flowchartContent"></div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="copyToClipboard('pseudocodeContent')">
+                    <span class="btn-icon">📋</span> Copy Pseudocode
+                </button>
+                <button class="action-btn" onclick="copyToClipboard('explanationContent')">
+                    <span class="btn-icon">📋</span> Copy Explanation
+                </button>
+                 <button class="action-btn" onclick="window.location.href='/'">
+                    <span class="btn-icon">🔄</span> Convert Another File
+                </button>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const conversionId = "{{ conversion_id }}";
+        const resultsDisplaySection = document.getElementById('resultsDisplaySection');
+        const loadingResults = document.getElementById('loadingResults');
+        const resultsProgressBar = document.getElementById('resultsProgressBar');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Tab switching function
+        function switchTab(tabId) {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) content.classList.add('active');
+            });
+        }
+
+        // Set up tab click handlers
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => switchTab(button.dataset.tab));
+        });
+
+        // Fetch and display results
+        function fetchResults() {
+            resultsProgressBar.style.width = '30%';
+
+            fetch(`/api/results/${conversionId}`)
+                .then(response => {
+                    resultsProgressBar.style.width = '70%';
+                    if (!response.ok) {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resultsProgressBar.style.width = '100%';
+                    
+                    // Hide loading and show results after a slight delay
+                    setTimeout(() => {
+                        loadingResults.style.display = 'none';
+                        resultsDisplaySection.style.display = 'block';
+                    }, 500);
+
+                    // Display pseudocode
+                    document.getElementById('pseudocodeContent').textContent = 
+                        data.pseudocode || 'Pseudocode not available.';
+                    
+                    // Display explanation
+                    const explanationContent = document.getElementById('explanationContent');
+                    if (data.explanation) {
+                        explanationContent.innerHTML = data.explanation.replace(/\n/g, '<br>');
+                    } else {
+                        explanationContent.textContent = 'Explanation not available.';
+                    }
+                    
+                    // Display flowchart
+                    const flowchartDiv = document.getElementById('flowchartContent');
+                    flowchartDiv.innerHTML = ''; // Clear previous content
+
+                    if (data.flowchart && data.flowchart.trim().startsWith('<svg')) {
+                        // Create SVG container
+                        const svgContainer = document.createElement('div');
+                        svgContainer.className = 'flowchart-svg-container';
+                        svgContainer.innerHTML = data.flowchart;
+                        flowchartDiv.appendChild(svgContainer);
+                        
+                        // Get the SVG element
+                        const svg = svgContainer.querySelector('svg');
+                        if (svg) {
+                            svg.style.maxWidth = '100%';
+                            svg.style.height = 'auto';
+                            svg.style.display = 'block';
+                            svg.style.margin = '0 auto';
+                        }
+                    } else if (data.flowchart && data.flowchart.startsWith('Error:')) {
+                        // Display a nicely formatted error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'flowchart-error';
+                        
+                        const errorMessage = data.flowchart.replace('Error:', '').trim();
+                        errorDiv.innerHTML = `
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 1rem;">
+                                <circle cx="12" cy="12" r="10" stroke="var(--error-color)" stroke-width="2" fill="#fde8e8"/>
+                                <path d="M12 7v6M12 17.01l.01-.01" stroke="var(--error-color)" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <h3>Flowchart Generation Failed</h3>
+                            <p>${errorMessage}</p>
+                            <small>This may be due to a Graphviz installation issue or an unsupported COBOL format.</small>
+                        `;
+                        flowchartDiv.appendChild(errorDiv);
+                    } else {
+                        // Fallback message with helpful information
+                        const fallbackDiv = document.createElement('div');
+                        fallbackDiv.className = 'flowchart-error';
+                        fallbackDiv.innerHTML = `
+                            <h3>Unable to Generate Flowchart</h3>
+                            <p>We couldn't generate a visual representation of your COBOL code structure.</p>
+                            <small>You can still view the pseudocode and explanation in the other tabs.</small>
+                        `;
+                        flowchartDiv.appendChild(fallbackDiv);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching results:', error);
+                    loadingResults.innerHTML = `
+                        <p class="error">Error loading results: ${error.message}</p>
+                        <button class="action-btn" onclick="window.location.href='/'">
+                            <span class="btn-icon">↩️</span> Back to Upload
+                        </button>
+                    `;
+                    resultsProgressBar.style.backgroundColor = '#ff6b6b';
+                });
+        }
+
+        // Start fetching results
+        fetchResults();
+    });
+
+    // Copy to clipboard function
+    window.copyToClipboard = function(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.textContent || element.innerText;
+        
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                const button = event.currentTarget;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<span class="btn-icon">✓</span> Copied!';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Copy failed:', err);
+                alert('Failed to copy text. Please try again.');
+            });
+    };
+</script>
+</body>
+</html>

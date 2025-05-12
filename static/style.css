@@ -1,0 +1,371 @@
+:root {
+    --primary-color: #76c7c0; /* New color: Teal */
+    --secondary-color: #5D6D7E; /* New color: Slate Grey */
+    --background-color: #f0f2f5; /* New color: Light Grey-Blue */
+    --text-color: #34495E; /* New color: Dark Blue-Grey */
+    --border-color: #d1d8e0; /* New color: Light Grey */
+    --success-color: #58D68D; /* New color: Soft Green */
+    --error-color: #EC7063; /* New color: Soft Red */
+    --white-color: #FFFFFF;
+    --card-bg-color: var(--white-color);
+    --font-family: 'Roboto', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 900px; /* Adjusted for a more focused layout */
+    margin: 2rem auto;
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-size: 2.2rem; /* Slightly reduced */
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.subtitle {
+    color: var(--secondary-color);
+    font-size: 1.05rem; /* Slightly reduced */
+}
+
+.upload-section {
+    background: var(--card-bg-color);
+    border-radius: 12px; /* More rounded */
+    padding: 2.5rem; /* Increased padding */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08); /* Softer shadow */
+    margin-bottom: 2rem;
+}
+
+.upload-box {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 2.5rem; /* Increased padding */
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background-color: #f9fafb; /* Slight off-white for dropzone */
+}
+
+.upload-box:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(118, 199, 192, 0.05); /* Lighter Teal on hover */
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-icon {
+    width: 56px; /* Adjusted size */
+    height: 56px;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.upload-btn {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    padding: 0.75rem 1.8rem; /* Adjusted padding */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.upload-btn:hover {
+    background-color: #63b0a8; /* Darker Teal */
+}
+
+.file-info {
+    text-align: center;
+    color: var(--secondary-color);
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* Progress Bar Styles (for index.html) */
+.progress-bar-container {
+    width: 100%;
+    max-width: 500px;
+    height: 12px; /* Slimmer bar */
+    background-color: #e0e0e0;
+    border-radius: 6px;
+    margin: 1.5rem auto;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 6px;
+    transition: width 0.4s ease-in-out;
+}
+
+.loading p {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    text-align: center;
+}
+
+/* Results Page Specific Styles (can be in results.html or here) */
+.results-section {
+    background: var(--card-bg-color);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.result-tabs {
+    display: flex;
+    gap: 0.5rem; /* Reduced gap */
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    font-size: 0.95rem; /* Slightly smaller */
+    font-weight: 500;
+    color: var(--secondary-color);
+    border-radius: 6px 6px 0 0; /* Rounded top corners */
+    transition: all 0.3s ease;
+    position: relative;
+    bottom: -1px; /* Align with border */
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--card-bg-color); /* Creates the 'cutout' effect */
+    background-color: var(--card-bg-color);
+}
+
+.tab-btn:not(.active):hover {
+    color: var(--primary-color);
+    background-color: #f0f2f5;
+}
+
+.tab-content {
+    display: none;
+    padding: 1rem 0; /* Adjusted padding */
+}
+
+.tab-content.active {
+    display: block;
+}
+
+pre {
+    background-color: #f9fafb; /* Lighter background for code */
+    padding: 1.2rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    color: #2c3e50; /* Darker text for code */
+}
+
+#pseudocodeContent strong, #explanationContent strong {
+    font-weight: 600; /* Bolder */
+    color: var(--primary-color);
+}
+
+#explanationContent {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    padding: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 0.75rem;
+    margin-top: 2rem;
+    justify-content: center; /* Center buttons */
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    border: none;
+    padding: 0.7rem 1.3rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: #4a5b6a; /* Darker Slate Grey */
+    transform: translateY(-2px);
+}
+
+.action-btn .btn-icon {
+    font-size: 1.1em;
+}
+
+/* Styles for the loading spinner (if kept, or for the new progress bar) */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+}
+
+/* Remove old spinner if not used, or restyle if needed */
+.spinner {
+    /* width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite; */
+    display: none; /* Hiding the old spinner, using progress bar instead */
+}
+
+/* @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+} */
+
+#flowchartContent {
+    background: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 600px; /* Increased from 400px */
+    min-width: 900px;  /* Added for wider flowcharts */
+    max-width: 100vw;  /* Allow to expand to viewport width */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Allow vertical scroll if needed */
+    overflow-x: auto; /* Enable horizontal scroll if needed */
+    overflow-y: auto;
+}
+
+/* Simplified flowchart styling */
+.flowchart-svg-container {
+    width: auto; /* Allow SVG to define its own width */
+    min-width: 800px; /* Match SVG default width */
+    max-width: 100%;
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.flowchart-svg-container svg {
+    min-width: 800px; /* Match SVG default width */
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.flowchart-error {
+    padding: 2rem;
+    text-align: center;
+    color: var(--error-color);
+    background: #fde8e8;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.flowchart-error h3 {
+    margin-bottom: 1rem;
+    color: var(--error-color);
+}
+
+flowchart-error small {
+    display: block;
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.error {
+    color: var(--error-color);
+    text-align: center;
+    padding: 1rem;
+}
+
+#flowchartContent svg {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+    .subtitle {
+        font-size: 0.95rem;
+    }
+    .upload-section, .results-section {
+        padding: 1.5rem;
+    }
+    .upload-box {
+        padding: 1.5rem;
+    }
+    .result-tabs {
+        gap: 0.2rem;
+    }
+    .tab-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    .action-buttons {
+        flex-direction: column;
+    }
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
